@@ -1,0 +1,31 @@
+body{
+    position: relative;
+    padding-bottom: 6em;
+    min-height:100vh;
+}
+footer{
+    padding: 0.8rem;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.pagination li {
+    margin-left: .25rem;
+    margin-right: .25rem;
+  }
+  
+  .pagination li .page-link {
+    border-radius: .25rem;
+    border: none;
+    min-width: 2.25rem;
+    text-align: center;
+    color:lightgreen;
+  }
+  
+  .pagination li.active .page-link,
+  .pagination li .page-link:hover {
+    background-color: #28a745;
+    color: #fff;
+    font-weight: bold;
+  }
+
