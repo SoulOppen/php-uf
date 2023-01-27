@@ -30,14 +30,11 @@
   
   @foreach($values as $value)
     <tr>
-      <th scope="row">
-        <a href="{{route('value_uno',$value)}}"> <?php
-          $input = $value->fecha;
-          $date = strtotime($input);
-          echo date('d-m-y', $date);    
-      ?>
-        </a>
-        </th>
+      <td scope="row">
+        <a href="{{route('value_uno',$value)}}"> 
+      {{date('d/m/Y',strtotime($value->fecha))}}
+           </a>
+        </td>
       <td>{{$value->valor}}</td>
       <td class="container col-2">
         <a href="{{route('value_editar',$value)}}" class=" btn btn-warning w-50">Editar</a>

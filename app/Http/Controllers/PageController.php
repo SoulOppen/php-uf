@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Value;
 
+
 class PageController extends Controller
 {
     public function inicio(){
@@ -31,7 +32,7 @@ class PageController extends Controller
             'valor'=>'required|numeric',
         ]);
         $valueAgregar=new Value;
-        $valueAgregar->fecha=$request->fecha;
+        $valueAgregar->fecha=$request->date('fecha');
         $valueAgregar->valor=$request->valor;
         $valueAgregar->save();
         return back()->with('mensaje','Valor Agregado');

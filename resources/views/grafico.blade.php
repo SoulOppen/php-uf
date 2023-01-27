@@ -4,13 +4,11 @@
 @endsection
 
 @section('content')
+@if (count($values)<2)
+    <a class="nav-link" href="{{ route('datos') }}">Datos</a>
+@else
 @foreach($values as $value)
-<?php
-          $input = $value->fecha;
-          $date = strtotime($input);
-          $date =date('d-m-y', $date); 
-          $value->fecha_2=$date;   
-?>
+    
 @endforeach
 <h1 class="my-3">Grafico historial Uf</h5>
 <div>
@@ -28,14 +26,14 @@
 @endsection
 @section('js')
 <script>
-    let values=<?php echo $values;?>;
+    let values={{Js::from($values)}};
+    console.log(values)
     let fechas=[];
-    let fechas_2=[];
     let valores=[];
     const sortJSON=(data, key, orden)=> {
     return data.sort(function (a, b) {
-        var x = a[key].toString(),
-        y = b[key].toString();
+        var x = a[key],
+        y = b[key];
 
         if (orden === 'asc') {
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
@@ -47,20 +45,19 @@
     });
 }
     values_s=sortJSON(values,'fecha','asc');
-    
-    for(value of values){
+    console.log(values_s)
+    for(value of values_s){
         fechas.push(value['fecha']);
-        fechas_2.push(value['fecha_2']);
         valores.push(value['valor']);
-        
-    }
+        }
     let i=0;
     const min=document.getElementById("min");
     for (value of values_s){
     
     const newElement = document.createElement('option')
+    fecha_1=new Date(value['fecha']);
     newElement.value=value['fecha'];
-    newElement.textContent =value['fecha_2'] ;
+    newElement.textContent =(fecha_1.getDate()+1) + "/" + (fecha_1.getMonth()+1) + "/" + fecha_1.getFullYear(); 
     min.appendChild(newElement);
     i++;
     }
@@ -70,8 +67,9 @@
     
     for (value of values_s){
     const newElement = document.createElement('option');
+    fecha_1=new Date(value['fecha']);
     newElement.value=value['fecha'];
-    newElement.textContent =value['fecha_2']; 
+    newElement.textContent =(fecha_1.getDate()+1) + "/" + (fecha_1.getMonth()+1) + "/" + fecha_1.getFullYear(); 
     
     if (i-1==j){     
         newElement.setAttribute('selected', "");
@@ -79,19 +77,24 @@
     max.appendChild(newElement);
 
     j++
-}   
-    
-    minimo=fechas[0];
+}   minimo=fechas[0];
     
     maximo=fechas[i-1];
-    
+    fechas_n=[]
+    for(fecha of fechas ){
+        f=new Date(fecha);
+        fechas_n.push((f.getDate()+1) + "/" + (f.getMonth()+1) + "/" + f.getFullYear()); 
+    }
+
+
+        
     
     const ctx = document.getElementById('myChart').getContext('2d');
     
     grafico=new Chart(ctx, {
     type: 'line',
     data: {
-        labels: fechas_2,
+        labels: fechas_n,
         datasets: [{
         label: 'Valor uf',
         data: valores,
@@ -126,27 +129,29 @@
         j++;                
         }
         if (mnselected>=mxselected){
+            grafico.clear();
             alert("No se puede Graficar");
+            
         }
         else {
-            fechas_n=[];
-            valores_n=[];
+            fechas_neo=[];
+            valores_neo=[];
     k=i;
     while (k<=j){
-        fechas_n.push(fechas_2[k]); 
-        valores_n.push(valores[k]);
+        fechas_neo.push(fechas_n[k]); 
+        valores_neo.push(valores[k]);
         k++;
         
     } 
-    grafico.clear();
+    
     grafico.destroy();
     grafico=new Chart(ctx, {
     type: 'line',
     data: {
-        labels: fechas_n,
+        labels: fechas_neo,
         datasets: [{
         label: 'Valor uf',
-        data: valores_n,
+        data: valores_neo,
         borderColor:'green',
         borderWidth: 1
         }]
@@ -179,27 +184,27 @@ max.addEventListener('change',(e)=>{
         j++;                
         }
         if (mnselected>=mxselected){
+            grafico.clear();
             alert("No se puede Graficar");
         }
         else {
-            fechas_n=[];
-            valores_n=[];
+            fechas_neo=[];
+            valores_neo=[];
     k=i;
     while (k<=j){
-        fechas_n.push(fechas_2[k]); 
-        valores_n.push(valores[k]);
+        fechas_neo.push(fechas_n[k]); 
+        valores_neo.push(valores[k]);
         k++;
         
     } 
-    grafico.clear();
     grafico.destroy();
     grafico=new Chart(ctx, {
     type: 'line',
     data: {
-        labels: fechas_n,
+        labels: fechas_neo,
         datasets: [{
         label: 'Valor uf',
-        data: valores_n,
+        data: valores_neo,
         borderColor:'green',
         borderWidth: 1
         }]
@@ -217,4 +222,5 @@ max.addEventListener('change',(e)=>{
 )
     
   </script>
+@endif
 @endsection
