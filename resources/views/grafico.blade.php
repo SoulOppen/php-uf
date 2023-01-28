@@ -2,17 +2,12 @@
 @section('header')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endsection
-
 @section('content')
 @if (count($values)<2)
     <a class="nav-link" href="{{ route('datos') }}">Datos</a>
 @else
-@foreach($values as $value)
-    
-@endforeach
 <h1 class="my-3">Grafico historial Uf</h5>
 <div>
-
     <select name="min" id="min"></select>
     <p class="d-inline">-</p>
     <select name="max" id="max"></select>
@@ -22,12 +17,10 @@
         <p>Grafico de valor uf en el tiempo</p>
     </canvas>
 </div>
-
 @endsection
 @section('js')
 <script>
     let values={{Js::from($values)}};
-    console.log(values)
     let fechas=[];
     let valores=[];
     const sortJSON=(data, key, orden)=> {
@@ -45,7 +38,6 @@
     });
 }
     values_s=sortJSON(values,'fecha','asc');
-    console.log(values_s)
     for(value of values_s){
         fechas.push(value['fecha']);
         valores.push(value['valor']);
@@ -55,9 +47,8 @@
     for (value of values_s){
     
     const newElement = document.createElement('option')
-    fecha_1=new Date(value['fecha']);
     newElement.value=value['fecha'];
-    newElement.textContent =(fecha_1.getDate()+1) + "/" + (fecha_1.getMonth()+1) + "/" + fecha_1.getFullYear(); 
+    newElement.textContent =value['fecha'].replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1'); 
     min.appendChild(newElement);
     i++;
     }
@@ -67,9 +58,8 @@
     
     for (value of values_s){
     const newElement = document.createElement('option');
-    fecha_1=new Date(value['fecha']);
     newElement.value=value['fecha'];
-    newElement.textContent =(fecha_1.getDate()+1) + "/" + (fecha_1.getMonth()+1) + "/" + fecha_1.getFullYear(); 
+    newElement.textContent =value['fecha'].replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1');
     
     if (i-1==j){     
         newElement.setAttribute('selected', "");
@@ -77,20 +67,18 @@
     max.appendChild(newElement);
 
     j++
-}   minimo=fechas[0];
-    
+}   
+    minimo=fechas[0];
+    vminimo=valores[0];
     maximo=fechas[i-1];
+    vmaximo=valores[i-1];
+    console.log(vminimo);
+    console.log(vmaximo);
     fechas_n=[]
     for(fecha of fechas ){
-        f=new Date(fecha);
-        fechas_n.push((f.getDate()+1) + "/" + (f.getMonth()+1) + "/" + f.getFullYear()); 
+        fechas_n.push(fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1'));
     }
-
-
-        
-    
     const ctx = document.getElementById('myChart').getContext('2d');
-    
     grafico=new Chart(ctx, {
     type: 'line',
     data: {
@@ -105,7 +93,10 @@
     options: {
         scales: {
         y: {
-            beginAtZero: true
+            ticks: {
+            min: vminimo*0.9,
+            max: vmaximo*1.1
+           },
         }
         }
     }
@@ -140,11 +131,12 @@
     while (k<=j){
         fechas_neo.push(fechas_n[k]); 
         valores_neo.push(valores[k]);
-        k++;
-        
+        k++; 
     } 
     
     grafico.destroy();
+    console.log(vminimo);
+    console.log(vmaximo);
     grafico=new Chart(ctx, {
     type: 'line',
     data: {
@@ -158,14 +150,16 @@
     },
     options: {
         scales: {
-        y: {
-            beginAtZero: true
+        y:{
+            ticks:{
+            min: vminimo*0.9,
+            max: vmaximo*1.1
         }
         }
     }
-})
+}})
         }})
-max.addEventListener('change',(e)=>{
+        max.addEventListener ('change',(e)=>{
         let mnselected = min.options[min.selectedIndex].value;
         let mxselected = max.options[max.selectedIndex].value;
         
@@ -186,6 +180,7 @@ max.addEventListener('change',(e)=>{
         if (mnselected>=mxselected){
             grafico.clear();
             alert("No se puede Graficar");
+            
         }
         else {
             fechas_neo=[];
@@ -194,10 +189,11 @@ max.addEventListener('change',(e)=>{
     while (k<=j){
         fechas_neo.push(fechas_n[k]); 
         valores_neo.push(valores[k]);
-        k++;
-        
+        k++; 
     } 
+    
     grafico.destroy();
+    
     grafico=new Chart(ctx, {
     type: 'line',
     data: {
@@ -211,16 +207,15 @@ max.addEventListener('change',(e)=>{
     },
     options: {
         scales: {
-        y: {
-            beginAtZero: true
+        y:{
+            ticks:{
+            min: vminimo*0.9,
+            max: vmaximo*1.1
         }
         }
     }
-})
-}
-}
-)
-    
+        }});
+    }})
   </script>
 @endif
 @endsection
