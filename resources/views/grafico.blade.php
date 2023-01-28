@@ -12,7 +12,7 @@
     <p class="d-inline">-</p>
     <select name="max" id="max"></select>
 </div>
-<div class="d-flex justify-content-center">
+<div class="d-flex my-5 justify-content-center">
     <canvas id="myChart" style="max-height:50vh;max-width:50vW">
         <p>Grafico de valor uf en el tiempo</p>
     </canvas>
@@ -72,8 +72,7 @@
     vminimo=valores[0];
     maximo=fechas[i-1];
     vmaximo=valores[i-1];
-    console.log(vminimo);
-    console.log(vmaximo);
+    rango=0.005;
     fechas_n=[]
     for(fecha of fechas ){
         fechas_n.push(fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g,'$3/$2/$1'));
@@ -93,10 +92,8 @@
     options: {
         scales: {
         y: {
-            ticks: {
-            min: vminimo*0.9,
-            max: vmaximo*1.1
-           },
+            min: Math.round(vminimo*(1-rango)),
+            max: Math.round(vmaximo*(1+rango))
         }
         }
     }
@@ -151,10 +148,8 @@
     options: {
         scales: {
         y:{
-            ticks:{
-            min: vminimo*0.9,
-            max: vmaximo*1.1
-        }
+            min: Math.round(vminimo*(1-rango)),
+            max: Math.round(vmaximo*(1+rango))
         }
     }
 }})
@@ -208,10 +203,8 @@
     options: {
         scales: {
         y:{
-            ticks:{
-            min: vminimo*0.9,
-            max: vmaximo*1.1
-        }
+            min: Math.round(vminimo*(1-rango)),
+            max: Math.round(vmaximo*(1+rango))
         }
     }
         }});
